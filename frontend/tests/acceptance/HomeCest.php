@@ -10,11 +10,14 @@ class HomeCest
     {
         $I->amOnPage(Url::toRoute('/site/index'));
         $I->see('My Application');
-
         $I->seeLink('About');
+        $I->wait(2);
         $I->click('About');
-        $I->wait(2); // wait for page to be opened
-
         $I->see('This is the About page.');
+        $I->wait(2); // wait for page to be opened
+        $I->click('Contact');
+        $I->wait(2);
+        $I->fillField('ContactForm[name]', 'Pupkin');
+        $I->wait(2);
     }
 }

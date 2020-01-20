@@ -15,6 +15,7 @@ use yii\filters\AccessControl;
 use yii\helpers\VarDumper;
 use yii\web\NotFoundHttpException;
 use yii\helpers\ArrayHelper;
+use frontend\models\search\TaskSearch;
 
 
 class TaskController extends Controller
@@ -38,21 +39,12 @@ class TaskController extends Controller
 
     public function actionIndex($sort = false)
     {
-        $query = Task::find();
-        if (!Yii::$app->user->can('admin')){
-            $query->andWhere(['author_id'=>Yii::$app->user->id]);
-        }
-
-        $provider = new ActiveDataProvider([
-            'query' => $query,
-            'pagination' => [
-                'validatePage' => false,
-                'pageSize'=> 20,
-            ]
-        ]);
+        $searchModel = new TaskSearch();
+        $provider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'provider' => $provider
+            'provider' => $provider,
+            'searchModel' => $searchModel,
         ]);
     }
 

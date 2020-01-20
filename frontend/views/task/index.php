@@ -9,6 +9,7 @@ use yii\grid\ActionColumn;
 /**
  * @var $this yii\web\View
  * @var \common\models\Task[] $task
+ * @var $searchModel frontend\models\search\TaskSearch
  * @var $provider \yii\data\ActiveDataProvider
  *
  */
@@ -26,8 +27,8 @@ $columns = [
         'label' => 'Название задачи',
         'attribute' => 'title',
     ],
-    'dayStart:datetime',
-    'dayEnd:datetime',
+        'dayStart:date',
+        'dayEnd:date',
     [
         'label' => 'Имя создателя',
         'attribute' => 'author_id',
@@ -69,6 +70,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?= GridView::widget([
     'dataProvider' => $provider,
+    'filterModel' => $searchModel,
     'columns'=> $columns,
 ])?>
 

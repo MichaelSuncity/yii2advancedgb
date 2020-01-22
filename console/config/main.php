@@ -30,6 +30,18 @@ return [
                 ],
             ],
         ],
+        'mailer' => [
+            'class'=> 'yii\swiftmailer\Mailer',
+            'useFileTransport' => false,
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'host' => 'smtp.mail.ru',
+                'username' => 'tests.pismaroff@mail.ru',
+                'password' => '***тут нужен пароль***',
+                'port' => '465',
+                'encryption' => 'ssl'
+            ],
+        ],
     ],
     'params' => $params,
 ];

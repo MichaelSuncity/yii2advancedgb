@@ -114,7 +114,7 @@ class ProjectController extends Controller
             if ($model->author_id == Yii::$app->user->id) {
                 if ($model->load(Yii::$app->request->post()) and $model->validate()) {
                     if ($model->save()) {
-                        return $this->redirect(["project/view?id=$model->id"]);
+                        return $this->redirect(["view", "id"=>$model->id]);
                     }
                 }
 

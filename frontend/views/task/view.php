@@ -2,7 +2,7 @@
 
 use yii\bootstrap\Html;
 use yii\bootstrap\ActiveForm;
-use frontend\models\Task;
+use common\models\Task;
 use yii\web\View;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
@@ -12,9 +12,11 @@ use yii\widgets\DetailView;
  * @var View $this
  * @var Task $model
  */
+$this->title = 'Задача № '.$model->id;
+$this->params['breadcrumbs'][] = ['label' => 'Tasks', 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
 ?>
-<h1>Задача № <?= $model->id?></h1>
-
+<h1><?= Html::encode($this->title) ?></h1>
 
 <?= DetailView::widget([
     'model' => $model,
@@ -28,27 +30,31 @@ use yii\widgets\DetailView;
         ],
         'title',
         'dayStart:datetime',
-        'dayEnd:date',
+        'dayEnd:datetime',
         [
             'label' => 'Описание задачи',
             'attribute' => 'description'
         ],
         [
             'label' => 'Имя создателя',
-            'attribute' => 'user.username'
+            'attribute' => 'author.username'
         ],
         [
-            'label' => 'Статус задачи',
-            'attribute' => 'status',
+            'label' => 'Имя исполнителя',
+            'attribute' => 'executor.username'
         ],
         [
-            'label' => 'Дата создания задачи',
-            'attribute' => 'created_at',
+            'attribute'=>'status',
+            'value'=>function(Task $model) {
+                return Task::getStatusName()[$model->status];
+            }
         ],
         [
-            'label' => 'Дата обновления задачи',
-            'attribute' => 'updated_at',
+            'label' => 'Приоритет',
+            'attribute' => 'priority',
         ],
+        'created_at:datetime',
+        'updated_at:datetime',
     ],
 ]) ?>
 

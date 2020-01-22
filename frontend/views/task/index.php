@@ -1,5 +1,5 @@
 <?php
-use frontend\models\Task;
+use common\models\Task;
 use yii\bootstrap\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
@@ -8,7 +8,8 @@ use yii\grid\SerialColumn;
 use yii\grid\ActionColumn;
 /**
  * @var $this yii\web\View
- * @var \frontend\models\Task[] $task
+ * @var \common\models\Task[] $task
+ * @var $searchModel frontend\models\search\TaskSearch
  * @var $provider \yii\data\ActiveDataProvider
  *
  */
@@ -26,36 +27,50 @@ $columns = [
         'label' => 'Название задачи',
         'attribute' => 'title',
     ],
-    'dayStart:datetime',
-    'dayEnd:datetime',
+        'dayStart:date',
+        'dayEnd:date',
     [
         'label' => 'Имя создателя',
-        'attribute' => 'userID',
+        'attribute' => 'author_id',
         'value' => function (Task $model)
         {
-            return $model->user->username;
+            return $model->author->username;
         }
     ],
     [
-        'label' => 'Статус',
-        'attribute' => 'status',
+        'label' => 'Имя исполнителя',
+        'attribute' => 'executor_id',
+        'value' => function (Task $model)
+        {
+            return $model->executor->username;
+        }
+    ],
+    [
+        'attribute'=>'status',
+        'value'=>function(Task $model) {
+            return Task::getStatusName()[$model->status];
+        }
     ],
 ];
 if (Yii::$app->user->can('user')){
     $columns[]=[
         'class' => ActionColumn::class,
-        'header' => 'Операции',
         'template' => '{view} {update} {delete} {edit}'
     ];
 }
+
+$this->title = 'Tasks';
+$this->params['breadcrumbs'][] = $this->title;
+
 ?>
 
-<h1>Список задач</h1>
+<h1><?= Html::encode($this->title) ?></h1>
 
 
 
 <?= GridView::widget([
     'dataProvider' => $provider,
+    'filterModel' => $searchModel,
     'columns'=> $columns,
 ])?>
 

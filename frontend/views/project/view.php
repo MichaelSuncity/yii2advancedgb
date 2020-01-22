@@ -52,3 +52,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= $this->render('/task/index', compact('provider'))?>
 
 <p><?= Html::a('Вернуться в список проектов', Url::to(['/project/index']) ) ?></p>
+
+<?=\frontend\widgets\chat\Chat::widget(['project_id' => $model->id])?>
+

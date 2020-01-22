@@ -46,7 +46,9 @@ class TaskSearch extends Task
 
         // add conditions that should always apply here
         if (!Yii::$app->user->can('admin')){
+            if (!Yii::$app->user->can('manager')){
             $query->andWhere(['author_id'=>Yii::$app->user->id]);
+            }
         }
 
         $dataProvider = new ActiveDataProvider([

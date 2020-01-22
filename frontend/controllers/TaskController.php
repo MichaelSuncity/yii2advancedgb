@@ -99,7 +99,7 @@ class TaskController extends Controller
 
                 return $this->render('update', [
                     'model' => $model,
-                    'templates'=>$templates
+                    'templates'=>[]
 
                 ]);
             } else {

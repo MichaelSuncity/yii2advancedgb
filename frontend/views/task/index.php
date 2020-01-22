@@ -46,8 +46,8 @@ $columns = [
         }
     ],
     [
-        'attribute'=>'status',
-        'value'=>function(Task $model) {
+        'attribute' => 'status',
+        'value' => function(Task $model) {
             return Task::getStatusName()[$model->status];
         }
     ],
@@ -55,7 +55,19 @@ $columns = [
 if (Yii::$app->user->can('user')){
     $columns[]=[
         'class' => ActionColumn::class,
-        'template' => '{view} {update} {delete} {edit}'
+        'header' => 'Operations',
+        'template' => '{view} {update} {delete}',
+        'buttons' => [
+            'view' => function ($url, $model) {
+                return html::a('view', "../task/view?id={$model->id}");
+            },
+             'update' => function ($url, $model){
+                return html::a('update', "../task/update?id={$model->id}");
+            },
+            'delete' => function ($url, $model){
+                return html::a('delete', "../task/delete?id={$model->id}");
+            }
+        ],
     ];
 }
 

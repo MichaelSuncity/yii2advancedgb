@@ -61,3 +61,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <p><?= Html::a('Редактировать задачу', "/task/update?id={$model['id']}", ['class' => 'btn btn-success'] )  ?></p>
 
 <p><?= Html::a('Вернуться в список задач', Url::to(['/task/index']) ) ?></p>
+
+<?=\frontend\widgets\chat\Chat::widget(['task_id' => $model->id])?>
+

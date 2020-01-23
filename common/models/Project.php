@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use frontend\models\ChatLog;
 use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -102,6 +103,17 @@ class Project extends \yii\db\ActiveRecord
     public function getAuthor()
     {
         return $this -> hasOne(User::class, ['id' => 'author_id']);
+    }
+
+    public function afterSave($insert, $changedAttribute)
+    {
+        $message = $insert ? '<b>создал(а) проект № : ' . $this->id : '<b>обновил(а) проект № : ' . $this->id;
+        ChatLog::create([
+            'username' => Yii::$app->user->identity->username,
+            'message' => $message,
+            'project_id' => $this->id,
+            'type' => ChatLog::SEND_MESSAGE,
+        ]);
     }
 
     public static function getStatusName()

@@ -10,6 +10,7 @@ use yii\db\ActiveRecord;
 use Yii;
 use yii\helpers\Url;
 use common\models\User;
+use frontend\models\ChatLog;
 
     /**
      * Class Task
@@ -180,6 +181,16 @@ class Task extends ActiveRecord
         ];
     }
 
+    public function afterSave($insert, $changedAttribute)
+    {
+        $message = $insert ? '<b>создал(а) задачу № : ' . $this->id : '<b>обновил(а) задачу № : ' . $this->id;
+            ChatLog::create([
+                'username' => Yii::$app->user->identity->username,
+                'message' => $message,
+                'task_id' => $this->id,
+                'type' => ChatLog::SEND_MESSAGE,
+            ]);
+    }
 /*
     public static function findOne($condition)
     {

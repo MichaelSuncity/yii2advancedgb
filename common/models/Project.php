@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "project".
@@ -110,5 +111,17 @@ class Project extends \yii\db\ActiveRecord
             static::STATUS_IN_PROGRESS => "In progress",
             static::STATUS_DONE => "Done",
         ];
+    }
+
+    public static function getProjectNames()
+    {
+        return ArrayHelper::map(
+            self::find()
+                ->where([
+                ])
+                ->asArray()
+                ->all(),
+            'id',
+            'title');
     }
 }

@@ -24,6 +24,7 @@ use yii\helpers\Url;
     <?= $form->field($model, 'template_id')->dropDownList($templates, ['prompt'=>'Без шаблона']) ?>
 <?php } ?>
 
+<?= $form->field($model, 'project_id')->textInput()->dropDownList(\common\models\Project::getProjectNames()) ?>
 <?= $form->field($model, 'title')->textInput(['autocomplete' => 'off']) ?>
 <?= $form->field($model, 'dayStart')->textInput(['type' => 'date']) ?>
 <?= $form->field($model, 'dayEnd')->textInput(['type' => 'date']) ?>

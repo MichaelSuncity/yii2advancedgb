@@ -54,7 +54,7 @@ class Project extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['author_id', 'priority', 'status', 'created_at', 'updated_at'], 'integer'],
+            [['author_id', 'priority_id', 'status', 'created_at', 'updated_at'], 'integer'],
             [['description'], 'string'],
             [['title'], 'string', 'max' => 255],
         ];
@@ -70,7 +70,7 @@ class Project extends \yii\db\ActiveRecord
             'author_id' => 'Создатель',
             'title' => 'Название проекта',
             'description' => 'Описание',
-            'priority' => 'Приоритет',
+            'priority_id' => 'Приоритет',
             'status' => 'Статус',
             'created_at' => 'Дата создания',
             'updated_at' => 'Дата обновления',
@@ -82,7 +82,7 @@ class Project extends \yii\db\ActiveRecord
      */
     public function getTasks()
     {
-        return $this->hasMany(Task::class(), [ 'project_id' => 'id']);
+        return $this->hasMany(Task::class, [ 'project_id' => 'id']);
     }
 
     /**
@@ -91,7 +91,7 @@ class Project extends \yii\db\ActiveRecord
 
     public function getPriority()
     {
-        return $this->hasOne(Priority::class, ['id' => 'priority_id', 'type' => Priority::TYPE_PROJECT]);
+        return $this->hasOne(Priority::class, ['id' => 'priority_id'/*, 'type' => Priority::TYPE_PROJECT*/]);
     }
 
     /**

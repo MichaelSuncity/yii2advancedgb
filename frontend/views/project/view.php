@@ -34,7 +34,13 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'title',
             'description:ntext',
-            'priority',
+            [
+                'label' => 'Приоритет',
+                'attribute'=>'priority_id',
+                'value'=>function(Project $model) {
+                    return $model->priority->title;
+                }
+            ],
             [
                 'attribute'=>'status',
                 'value'=>function(Project $model) {

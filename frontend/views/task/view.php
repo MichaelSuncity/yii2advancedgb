@@ -51,7 +51,10 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
         [
             'label' => 'Приоритет',
-            'attribute' => 'priority',
+            'attribute'=>'priority_id',
+            'value'=>function(Task $model) {
+                return $model->priority->title;
+            }
         ],
         'created_at:datetime',
         'updated_at:datetime',

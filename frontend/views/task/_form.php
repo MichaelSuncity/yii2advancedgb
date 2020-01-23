@@ -13,7 +13,6 @@ use yii\helpers\Url;
 /* @var $templates array */
 
 /*
- * <?= $form->field($model, 'priority')->dropDownList(Priority::getTaskPriorities()) ?>
 <?= $form->field($model, 'project_id')->dropDownList(Task::getProject()) ?>
  * */
 
@@ -28,8 +27,9 @@ use yii\helpers\Url;
 <?= $form->field($model, 'title')->textInput(['autocomplete' => 'off']) ?>
 <?= $form->field($model, 'dayStart')->textInput(['type' => 'date']) ?>
 <?= $form->field($model, 'dayEnd')->textInput(['type' => 'date']) ?>
-<?= $form->field($model, 'executor_id')->textInput() ?>
+<?= $form->field($model, 'executor_id')->textInput()->dropDownList(\common\models\User::getUsernames()) ?>
 <?= $form->field($model, 'description')->textarea(['rows' => 5]) ?>
+<?= $form->field($model, 'priority_id')->textInput()->dropDownList(Priority::getTaskPriorities()) ?>
 <?= $form->field($model, 'status')->dropDownList(Task::getStatusName()) ?>
 
 

@@ -46,6 +46,13 @@ $columns = [
         }
     ],
     [
+        'label' => 'Приоритет',
+        'attribute'=>'priority_id',
+        'value'=>function(Task $model) {
+            return $model->priority->title;
+        }
+    ],
+    [
         'attribute' => 'status',
         'value' => function(Task $model) {
             return Task::getStatusName()[$model->status];

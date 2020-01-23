@@ -93,7 +93,7 @@ class Task extends ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'dayStart', 'description', 'status', 'executor_id'], 'required'],
+            [['title', 'dayStart', 'description', 'status', 'executor_id', 'priority_id'], 'required'],
             [['title', 'description'], 'string'],
             [['title'], 'string', 'min' => 2, 'max' => 160],
             [['description'], 'string', 'min'=> 5],
@@ -108,7 +108,7 @@ class Task extends ActiveRecord
             [['author_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['author_id' => 'id']],
             [['executor_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['executor_id' => 'id']],
             [['template_id'], 'exist', 'skipOnError' => true, 'targetClass' => Task::class, 'targetAttribute' => ['template_id' => 'id']],
-            //[['priority_id'], 'exist', 'skipOnError' => false, 'targetClass' => Priority::class, 'targetAttribute' => ['priority_id' => 'id']],
+            [['priority_id'], 'exist', 'skipOnError' => false, 'targetClass' => Priority::class, 'targetAttribute' => ['priority_id' => 'id']],
             //[['project_id'], 'exist', 'skipOnError' => false, 'targetClass' => Project::class, 'targetAttribute' => ['project_id' => 'id']],
         ];
     }

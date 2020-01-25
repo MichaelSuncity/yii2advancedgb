@@ -43,10 +43,11 @@ class ProjectController extends Controller
     public function actionIndex()
     {
         $query = Project::find();
-        if (!Yii::$app->user->can('admin')){
-            $query->andWhere(['author_id'=>Yii::$app->user->id]);
+        if (!Yii::$app->user->can('admin')) {
+            if (!Yii::$app->user->can('manager')) {
+                $query->andWhere(['author_id' => Yii::$app->user->id]);
+            }
         }
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
@@ -68,11 +69,10 @@ class ProjectController extends Controller
      */
     public function actionView($id)
     {
-        $user = Yii::$app->user->identity;
         $model = $this->findModel($id);
 
-        $provider = new ActiveDataProvider([
-            'query' => Task::find()->where(['author_id' => $user->id, 'project_id' => $model->id]),
+            $provider = new ActiveDataProvider([
+            'query' => Task::find()->where(['project_id' => $model->id]),
         ]);
 
         if (Yii::$app->user->can('manager') || Yii::$app->user->can('admin') || $model->author_id == Yii::$app->user->id) {
@@ -114,7 +114,7 @@ class ProjectController extends Controller
             if ($model->author_id == Yii::$app->user->id) {
                 if ($model->load(Yii::$app->request->post()) and $model->validate()) {
                     if ($model->save()) {
-                        return $this->redirect(["project/view?id=$model->id"]);
+                        return $this->redirect(["view", "id"=>$model->id]);
                     }
                 }
 
@@ -136,7 +136,7 @@ class ProjectController extends Controller
     public function actionDelete($id)
     {
         $model = Project::findOne($id);
-        if ($model->author_id == Yii::$app->user->id) {
+        if (Yii::$app->user->can('manager') || Yii::$app->user->can('admin') || $model->author_id == Yii::$app->user->id) {
             $model->delete();
             return $this->redirect(['index']);
         }else{

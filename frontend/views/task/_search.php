@@ -27,9 +27,8 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'author_id') ?>
 
     <?= $form->field($model, 'executor_id') ?>
+    <?= $form->field($model, 'priority_id') ?>
     <?= $form->field($model, 'status') ?>
-
-    <?php // echo $form->field($model, 'priority') ?>
 
     <?php // echo $form->field($model, 'created_at') ?>
 

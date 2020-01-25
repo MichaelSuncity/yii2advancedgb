@@ -67,4 +67,18 @@ class Priority extends \yii\db\ActiveRecord
             'id',
             'title');
     }
+
+    public static function getProjectPriorities()
+    {
+        return ArrayHelper::map(
+            self::find()
+                ->where([
+                    'type' => self::TYPE_PROJECT
+                ])
+                ->asArray()
+                ->orderBy('order')
+                ->all(),
+            'id',
+            'title');
+    }
 }

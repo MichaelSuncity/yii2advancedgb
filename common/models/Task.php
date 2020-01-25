@@ -10,6 +10,7 @@ use yii\db\ActiveRecord;
 use Yii;
 use yii\helpers\Url;
 use common\models\User;
+use frontend\models\ChatLog;
 
     /**
      * Class Task
@@ -74,7 +75,7 @@ class Task extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'title' => 'Название',
+            'title' => 'Название задачи',
             'dayStart' => 'Дата начала',
             'dayEnd' => 'Дата окончания',
             'author_id' => 'Создатель',
@@ -93,13 +94,13 @@ class Task extends ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'dayStart', 'description', 'status', 'executor_id'], 'required'],
+            [['title', 'dayStart', 'description', 'status', 'executor_id', 'priority_id', 'project_id'], 'required'],
             [['title', 'description'], 'string'],
             [['title'], 'string', 'min' => 2, 'max' => 160],
             [['description'], 'string', 'min'=> 5],
             [['dayStart', 'dayEnd'], 'date', 'format' =>'php:Y-m-d'],
             [['author_id', 'executor_id', 'template_id'], 'integer'],
-            [['status'], 'integer'],
+            [['status','priority_id', 'project_id'], 'integer'],
             ['dayEnd', 'default', 'value' => function(){
                 return $this->dayStart;
             }],
@@ -108,8 +109,8 @@ class Task extends ActiveRecord
             [['author_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['author_id' => 'id']],
             [['executor_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['executor_id' => 'id']],
             [['template_id'], 'exist', 'skipOnError' => true, 'targetClass' => Task::class, 'targetAttribute' => ['template_id' => 'id']],
-            //[['priority_id'], 'exist', 'skipOnError' => false, 'targetClass' => Priority::class, 'targetAttribute' => ['priority_id' => 'id']],
-            //[['project_id'], 'exist', 'skipOnError' => false, 'targetClass' => Project::class, 'targetAttribute' => ['project_id' => 'id']],
+            [['priority_id'], 'exist', 'skipOnError' => false, 'targetClass' => Priority::class, 'targetAttribute' => ['priority_id' => 'id']],
+            [['project_id'], 'exist', 'skipOnError' => false, 'targetClass' => Project::class, 'targetAttribute' => ['project_id' => 'id']],
         ];
     }
 
@@ -180,6 +181,16 @@ class Task extends ActiveRecord
         ];
     }
 
+    public function afterSave($insert, $changedAttribute)
+    {
+        $message = $insert ? '<b>создал(а) задачу № : ' . $this->id : '<b>обновил(а) задачу № : ' . $this->id;
+            ChatLog::create([
+                'username' => Yii::$app->user->identity->username,
+                'message' => $message,
+                'task_id' => $this->id,
+                'type' => ChatLog::SEND_MESSAGE,
+            ]);
+    }
 /*
     public static function findOne($condition)
     {

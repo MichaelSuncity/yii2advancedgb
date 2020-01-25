@@ -17,7 +17,7 @@ use common\models\Project;
 
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'priority')->textInput() ?>
+    <?= $form->field($model, 'priority_id')->textInput()->dropDownList(\common\models\Priority::getProjectPriorities())?>
 
     <?= $form->field($model, 'status')->dropDownList(Project::getStatusName()) ?>
 

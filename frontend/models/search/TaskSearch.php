@@ -18,7 +18,7 @@ class TaskSearch extends Task
     public function rules()
     {
         return [
-            [['id', 'author_id', 'executor_id', 'status'/*'priority', 'status', 'created_at'*/], 'integer'],
+            [['id', 'author_id', 'executor_id', 'status', 'priority_id', 'status'], 'integer'],
             [['dayStart', 'dayEnd'], 'date', 'format' =>'php:Y-m-d'],
             [['title'], 'safe'],
         ];
@@ -46,7 +46,9 @@ class TaskSearch extends Task
 
         // add conditions that should always apply here
         if (!Yii::$app->user->can('admin')){
+            if (!Yii::$app->user->can('manager')){
             $query->andWhere(['author_id'=>Yii::$app->user->id]);
+            }
         }
 
         $dataProvider = new ActiveDataProvider([
@@ -70,7 +72,7 @@ class TaskSearch extends Task
             'id' => $this->id,
             'author_id' => $this->author_id,
             'executor_id' => $this->executor_id,
-            'priority' => $this->priority,
+            'priority_id' => $this->priority_id,
             'status' => $this->status,
             'dayStart' => $this->dayStart,
             'dayEnd' => $this->dayEnd,

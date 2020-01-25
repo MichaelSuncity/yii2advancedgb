@@ -49,6 +49,21 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'created_at:datetime',
             'updated_at:datetime',
+            [
+                'attribute' => 'is_parent',
+                'label' => 'Это материнский проект?',
+                'value' => function (common\models\Project $model) {
+                    return $model->is_parent ? "Да" : "Нет";
+                },
+            ],
+            [
+                'attribute' => 'parent_project_id',
+                'label' => 'Какой у него материнский проект?',
+                'format' => 'raw',
+                'value' => function (common\models\Project $model) {
+                    return Html::a($model->parent_project_id, ['/project/view', 'id' => $model->parent_project_id]);
+                }
+            ],
         ],
 ]) ?>
 

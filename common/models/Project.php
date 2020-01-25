@@ -21,6 +21,7 @@ use yii\helpers\ArrayHelper;
  * @property int|null $status
  * @property int|null $created_at
  * @property int|null $updated_at
+ * @property int|null $parent_project_id
  *
  * @property Task[] $tasks
  */
@@ -58,6 +59,8 @@ class Project extends \yii\db\ActiveRecord
         return [
             [['author_id', 'priority_id', 'status', 'created_at', 'updated_at'], 'integer'],
             [['description'], 'string'],
+            [['is_parent'], 'boolean'],
+            [['parent_project_id'], 'integer'],
             [['title'], 'string', 'max' => 255],
         ];
     }
@@ -76,6 +79,8 @@ class Project extends \yii\db\ActiveRecord
             'status' => 'Статус',
             'created_at' => 'Дата создания',
             'updated_at' => 'Дата обновления',
+            'is_parent' => 'Это родительский проект?',
+            'parent_project_id' => 'Прикрепить к родительскому проекту',
         ];
     }
 
@@ -85,6 +90,15 @@ class Project extends \yii\db\ActiveRecord
     public function getTasks()
     {
         return $this->hasMany(Task::class, [ 'project_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+
+    public function getParent()
+    {
+        return $this->hasOne(Project::class, ['parent_project_id' => 'id']);
     }
 
     /**
@@ -130,6 +144,19 @@ class Project extends \yii\db\ActiveRecord
         return ArrayHelper::map(
             self::find()
                 ->where([
+                ])
+                ->asArray()
+                ->all(),
+            'id',
+            'title');
+    }
+
+    public static function getParentProjectNames()
+    {
+        return ArrayHelper::map(
+            self::find()
+                ->where([
+                    'is_parent' => true
                 ])
                 ->asArray()
                 ->all(),

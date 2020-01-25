@@ -16,6 +16,8 @@ use yii\helpers\VarDumper;
 use yii\web\NotFoundHttpException;
 use yii\helpers\ArrayHelper;
 use frontend\models\search\TaskSearch;
+use common\models\TaskAttachmentsAddForm;
+use yii\web\UploadedFile;
 
 
 class TaskController extends Controller
@@ -28,7 +30,7 @@ class TaskController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'create', 'view', 'update', 'delete'],
+                        'actions' => ['index', 'create', 'view', 'update', 'delete', 'addattachment'],
                         'roles' => ['@']
                     ],
                 ],
@@ -61,7 +63,9 @@ class TaskController extends Controller
         $model = Task::findOne($id);
         if (Yii::$app->user->can('manager') || Yii::$app->user->can('admin') || $model->author_id == Yii::$app->user->id) {
             return $this->render('view',
-                compact('model'));
+                ['model' => $model,
+                'taskAttachmentForm' => new TaskAttachmentsAddForm()]
+        );
         }  else {
             throw new NotFoundHttpException();
         }
@@ -117,5 +121,19 @@ class TaskController extends Controller
         }else{
             throw new NotFoundHttpException();
         }
+    }
+
+
+    public function actionAddattachment()
+    {
+        $model = new TaskAttachmentsAddForm();
+        $model->load(\Yii::$app->request->post());
+        $model->attachment = UploadedFile::getInstance($model, 'attachment');
+        if ($model->save()) {
+            \Yii::$app->session->setFlash('success', "Файл добавлен");
+        } else {
+            \Yii::$app->session->setFlash('error', "Не удалось добавить файл");
+        }
+        $this->redirect(\Yii::$app->request->referrer);
     }
 }

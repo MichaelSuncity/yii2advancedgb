@@ -11,6 +11,7 @@ use yii\widgets\DetailView;
 /**
  * @var View $this
  * @var Task $model
+ * @var \common\models\TaskAttachmentsAddForm $taskAttachmentForm
  */
 $this->title = 'Задача № '.$model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Tasks', 'url' => ['index']];
@@ -62,6 +63,26 @@ $this->params['breadcrumbs'][] = $this->title;
 ]) ?>
 
 <p><?= Html::a('Редактировать задачу', "/task/update?id={$model['id']}", ['class' => 'btn btn-success'] )  ?></p>
+
+<div class="attachments">
+    <h3>Вложения</h3>
+    <?php $form = ActiveForm::begin([
+        'action' => Url::to(['task/addattachment']),
+        'options' => ['class' => "form-inline"]
+    ]);?>
+    <?=$form->field($taskAttachmentForm, 'task_id')->hiddenInput(['value' => $model->id])->label(false);?>
+    <?=$form->field($taskAttachmentForm, 'attachment')->fileInput();?>
+    <?=Html::submitButton("Добавить",['class' => 'btn btn-success']);?>
+    <?ActiveForm::end()?>
+    <hr>
+    <div class="attachments-history">
+        <?foreach ($model->taskAttachments as $file): ?>
+            <a href="/img/task/<?=$file->path?>">
+                <img src="/img/task/small/<?=$file->path?>" alt="">
+            </a>
+        <?php endforeach;?>
+    </div>
+</div>
 
 <p><?= Html::a('Вернуться в список задач', Url::to(['/task/index']) ) ?></p>
 

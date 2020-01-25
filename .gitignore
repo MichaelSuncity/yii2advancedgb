@@ -50,4 +50,5 @@ phpunit.phar
 
 /backend/web/assets/
 /frontend/web/assets/
+/frontend/web/img/
 

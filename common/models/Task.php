@@ -170,6 +170,11 @@ class Task extends ActiveRecord
         return $this->hasOne(Priority::class, ['id' => 'priority_id'])->where(['priority.type'=>Priority::TYPE_TASK]);
     }
 
+    public function getTaskAttachments()
+    {
+        return $this->hasMany(TaskAttachments::class, ['task_id' => 'id']);
+    }
+
 
 
     public static function getStatusName()

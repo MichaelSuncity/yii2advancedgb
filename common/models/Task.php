@@ -170,12 +170,23 @@ class Task extends ActiveRecord
         return $this->hasOne(Priority::class, ['id' => 'priority_id'])->where(['priority.type'=>Priority::TYPE_TASK]);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+
     public function getTaskAttachments()
     {
         return $this->hasMany(TaskAttachments::class, ['task_id' => 'id']);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
 
+    public function getTaskComments()
+    {
+        return $this->hasMany(TaskComments::class, ['task_id' => 'id']);
+    }
 
     public static function getStatusName()
     {

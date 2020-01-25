@@ -17,6 +17,7 @@ use yii\web\NotFoundHttpException;
 use yii\helpers\ArrayHelper;
 use frontend\models\search\TaskSearch;
 use common\models\TaskAttachmentsAddForm;
+use common\models\TaskComments;
 use yii\web\UploadedFile;
 
 
@@ -30,7 +31,7 @@ class TaskController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'create', 'view', 'update', 'delete', 'addattachment'],
+                        'actions' => ['index', 'create', 'view', 'update', 'delete', 'addattachment', 'addcomment'],
                         'roles' => ['@']
                     ],
                 ],
@@ -64,8 +65,9 @@ class TaskController extends Controller
         if (Yii::$app->user->can('manager') || Yii::$app->user->can('admin') || $model->author_id == Yii::$app->user->id) {
             return $this->render('view',
                 ['model' => $model,
-                'taskAttachmentForm' => new TaskAttachmentsAddForm()]
-        );
+                'taskAttachmentForm' => new TaskAttachmentsAddForm(),
+                'taskCommentForm' => new TaskComments(),
+                ]);
         }  else {
             throw new NotFoundHttpException();
         }
@@ -133,6 +135,17 @@ class TaskController extends Controller
             \Yii::$app->session->setFlash('success', "Файл добавлен");
         } else {
             \Yii::$app->session->setFlash('error', "Не удалось добавить файл");
+        }
+        $this->redirect(\Yii::$app->request->referrer);
+    }
+
+    public function actionAddcomment()
+    {
+        $model = new TaskComments();
+        if ($model->load(\Yii::$app->request->post()) && $model->save()) {
+            \Yii::$app->session->setFlash('success', "Комментарий добавлен");
+        } else {
+            \Yii::$app->session->setFlash('error', "Не удалось добавить комментарий");
         }
         $this->redirect(\Yii::$app->request->referrer);
     }

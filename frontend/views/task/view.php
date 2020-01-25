@@ -12,6 +12,8 @@ use yii\widgets\DetailView;
  * @var View $this
  * @var Task $model
  * @var \common\models\TaskAttachmentsAddForm $taskAttachmentForm
+ * @var  $taskCommentForm
+
  */
 $this->title = 'Задача № '.$model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Tasks', 'url' => ['index']];
@@ -82,6 +84,19 @@ $this->params['breadcrumbs'][] = $this->title;
             </a>
         <?php endforeach;?>
     </div>
+    <h3>Комментарии</h3>
+    <div class="comment-history">
+        <?foreach ($model->taskComments as $comment): ?>
+            <p><strong><?=$comment->user->username?></strong>: <?=$comment->content?></p>
+        <?php endforeach;?>
+    </div>
+    <?php
+    $form = ActiveForm::begin(['action' => Url::to(['task/addcomment'])]);?>
+    <?=$form->field($taskCommentForm, 'user_id')->hiddenInput(['value' => \Yii::$app->user->identity->getId()])->label(false);?>
+    <?=$form->field($taskCommentForm, 'task_id')->hiddenInput(['value' => $model->id])->label(false);?>
+    <?=$form->field($taskCommentForm, 'content')->textInput();?>
+    <?=Html::submitButton("Отправить",['class' => 'btn btn-success']);?>
+    <?ActiveForm::end()?>
 </div>
 
 <p><?= Html::a('Вернуться в список задач', Url::to(['/task/index']) ) ?></p>

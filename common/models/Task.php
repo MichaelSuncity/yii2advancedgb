@@ -11,6 +11,8 @@ use Yii;
 use yii\helpers\Url;
 use common\models\User;
 use frontend\models\ChatLog;
+use yii\web\Link;
+use yii\web\Linkable;
 
     /**
      * Class Task
@@ -38,7 +40,7 @@ use frontend\models\ChatLog;
     */
 
 
-class Task extends ActiveRecord
+class Task extends ActiveRecord implements Linkable
 {
     const STATUS_NEW = 1;
     const STATUS_IN_PROGRESS = 2;
@@ -230,4 +232,32 @@ class Task extends ActiveRecord
         ];
     }
 
+    public function fields()
+    {
+        return array_merge(parent::fields(),[
+            'id_clone' => function () {
+                return $this->id;
+            },
+
+        ]);
+    }
+
+    public function extraFields()
+    {
+        return [
+            'author',
+            'authorEmail' => function () {
+                return $this->author->email;
+            },
+
+        ];
+    }
+
+    public function getLinks()
+    {
+        return [
+            Link::REL_SELF => Url::to(['task/view', 'id' => $this->id]),
+            'authorEmailLink' => Url::to(['user/view', 'id'=>$this->author_id])
+        ];
+    }
 }

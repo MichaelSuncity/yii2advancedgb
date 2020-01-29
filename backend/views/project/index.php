@@ -35,14 +35,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'id',
             ],
             [
-                'class' => ActionColumn::class,
-                'header' => 'Название проекта',
-                'template' => '{view}',
-                'buttons' => [
-                    'view' => function ($url, $model){
-                        return html::a("{$model->title}", $url);
-                    }
-                ],
+                'label' => 'Название проекта',
+                'attribute' => 'title',
             ],
             [
                 'label' => 'Описание',

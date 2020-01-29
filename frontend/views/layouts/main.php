@@ -9,7 +9,10 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use common\widgets\Alert;
+use yii\helpers\Url;
 
+$urlPrevious = Url::Previous();
+$urlCurrent[] = Url::remember();
 
 AppAsset::register($this);
 ?>
@@ -71,6 +74,7 @@ AppAsset::register($this);
         ]) ?>
         <?= Alert::widget() ?>
         <?= $content ?>
+        <p><?= Html::a('Вернуться на предыдущую страницу', $urlPrevious ) ?></p>
     </div>
 </div>
 

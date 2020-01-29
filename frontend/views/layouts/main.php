@@ -10,6 +10,7 @@ use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use common\widgets\Alert;
 
+
 AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
@@ -40,6 +41,7 @@ AppAsset::register($this);
         ['label' => 'Chat', 'url' => ['/chat/index']],
         ['label' => 'Projects', 'url' => ['/project/index']],
         ['label' => 'Tasks', 'url' => ['/task/index']],
+        ['label' => 'Personal account', 'url' => ['/account/task']],
         ['label' => 'About', 'url' => ['/site/about']],
         ['label' => 'Contact', 'url' => ['/site/contact']],
     ];

@@ -65,14 +65,14 @@ if (Yii::$app->user->can('user')){
         'header' => 'Operations',
         'template' => '{view} {update} {delete}',
         'buttons' => [
-            'view' => function ($url, $model) {
-                return html::a('view', "../task/view?id={$model->id}");
+            'view' => function ($url, Task $model) {
+                return html::a('view', Url::to(['/task/view', 'id' => $model->id]));
             },
-             'update' => function ($url, $model){
-                return html::a('update', "../task/update?id={$model->id}");
+             'update' => function ($url, Task $model){
+                return html::a('update', Url::to(['/task/update', 'id' => $model->id]));
             },
-            'delete' => function ($url, $model){
-                return html::a('delete', "../task/delete?id={$model->id}");
+            'delete' => function ($url, Task $model){
+                return html::a('delete', Url::to(['/task/delete', 'id' => $model->id]));
             }
         ],
     ];

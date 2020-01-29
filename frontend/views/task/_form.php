@@ -12,9 +12,6 @@ use yii\helpers\Url;
 /* @var $form yii\widgets\ActiveForm */
 /* @var $templates array */
 
-/*
-<?= $form->field($model, 'project_id')->dropDownList(Task::getProject()) ?>
- * */
 
 ?>
 
@@ -32,9 +29,6 @@ use yii\helpers\Url;
 <?= $form->field($model, 'description')->textarea(['rows' => 5]) ?>
 <?= $form->field($model, 'priority_id')->textInput()->dropDownList(Priority::getTaskPriorities()) ?>
 <?= $form->field($model, 'status')->dropDownList(Task::getStatusName()) ?>
-
-
-
 <?= $form->field($model, 'is_template')->checkbox() ?>
 
 <p><?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?></p>

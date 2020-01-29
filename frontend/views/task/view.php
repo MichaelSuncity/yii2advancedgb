@@ -13,6 +13,7 @@ use yii\widgets\DetailView;
  * @var Task $model
  * @var \common\models\TaskAttachmentsAddForm $taskAttachmentForm
  * @var  $taskCommentForm
+ * @var  $isSubscribed boolean
 
  */
 $this->title = 'Задача № '.$model->id;
@@ -20,7 +21,13 @@ $this->params['breadcrumbs'][] = ['label' => 'Tasks', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <h1><?= Html::encode($this->title) ?></h1>
-
+<p>
+    <?php if (!$isSubscribed) { ?>
+        <?= Html::a('Subscribe', ['subscribe', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+    <?php } else { ?>
+        <?= Html::a('Unsubscribe', ['unsubscribe', 'id' => $model->id], ['class' => 'btn btn-danger']) ?>
+    <?php } ?>
+</p>
 <?= DetailView::widget([
     'model' => $model,
     'attributes'=> [
@@ -64,7 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ],
 ]) ?>
 
-<p><?= Html::a('Редактировать задачу', "/task/update?id={$model['id']}", ['class' => 'btn btn-success'] )  ?></p>
+<p><?= Html::a('Редактировать задачу', Url::to(['/task/update', 'id' => $model->id]), ['class' => 'btn btn-success'] )  ?></p>
 
 <div class="attachments">
     <h3>Вложения</h3>

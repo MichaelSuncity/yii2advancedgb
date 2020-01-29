@@ -7,19 +7,14 @@ namespace frontend\controllers;
 use common\models\Task;
 use yii\web\Controller;
 use Yii;
-use yii\data\ActiveDataProvider;
-use yii\db\Query;
-use yii\db\QueryBuilder;
-use yii\filters\PageCache;
 use yii\filters\AccessControl;
-use yii\helpers\VarDumper;
 use yii\web\NotFoundHttpException;
 use yii\helpers\ArrayHelper;
 use frontend\models\search\TaskSearch;
 use common\models\TaskAttachmentsAddForm;
 use common\models\TaskComments;
 use yii\web\UploadedFile;
-
+use common\models\TaskSubscriber;
 
 class TaskController extends Controller
 {
@@ -31,7 +26,8 @@ class TaskController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'create', 'view', 'update', 'delete', 'addattachment', 'addcomment'],
+                        'actions' => ['index', 'create', 'view', 'update', 'delete',
+                            'addattachment', 'addcomment', 'subscribe', 'unsubscribe'],
                         'roles' => ['@']
                     ],
                 ],
@@ -54,17 +50,12 @@ class TaskController extends Controller
 
 
     public function actionView(int $id) {
-       /* $cacheKey = "activity_{$id}";
-        if(Yii::$app->cache->exists($cacheKey)){
-            $model = Yii::$app->cache->get($cacheKey);
-        } else {
-            $model = Task::findOne($id);
-            Yii::$app->cache->set($cacheKey, $model);
-        }*/
         $model = Task::findOne($id);
+        $isSubscribed = TaskSubscriber::isSubscribed(\Yii::$app->user->id, $id);
         if (Yii::$app->user->can('manager') || Yii::$app->user->can('admin') || $model->author_id == Yii::$app->user->id) {
             return $this->render('view',
                 ['model' => $model,
+                'isSubscribed' => $isSubscribed,
                 'taskAttachmentForm' => new TaskAttachmentsAddForm(),
                 'taskCommentForm' => new TaskComments(),
                 ]);
@@ -96,7 +87,7 @@ class TaskController extends Controller
             if ($model->author_id == Yii::$app->user->id) {
                 if ($model->load(Yii::$app->request->post()) and $model->validate()) {
                     if ($model->save()) {
-                        return $this->redirect(["task/view?id=$model->id"]);
+                        return $this->redirect(['task/view', 'id' => $model->id]);
                     }
                 }
 
@@ -148,5 +139,25 @@ class TaskController extends Controller
             \Yii::$app->session->setFlash('error', "Не удалось добавить комментарий");
         }
         $this->redirect(\Yii::$app->request->referrer);
+    }
+
+    public function actionSubscribe($id)
+    {
+        if (TaskSubscriber::subscribe(\Yii::$app->user->id, $id)) {
+            Yii::$app->session->setFlash('success', 'Subscribed');
+        } else {
+            Yii::$app->session->setFlash('error', 'Error');
+        }
+        $this->redirect(['task/view', 'id' => $id]);
+    }
+
+    public function actionUnsubscribe($id)
+    {
+        if (TaskSubscriber::unsubscribe(\Yii::$app->user->id, $id)) {
+            Yii::$app->session->setFlash('success', 'Subscribed');
+        } else {
+            Yii::$app->session->setFlash('error', 'Error');
+        }
+        $this->redirect(['task/view', 'id' => $id]);
     }
 }

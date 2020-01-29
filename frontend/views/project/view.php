@@ -68,7 +68,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ]) ?>
 
 
-<p><?= Html::a('Редактировать проект', "/project/update?id={$model['id']}", ['class' => 'btn btn-success'] )  ?></p>
+<p><?= Html::a('Редактировать проект', Url::to(['/project/update', 'id' => $model->id]), ['class' => 'btn btn-success'] )  ?></p>
 
 <?= $this->render('/task/index', compact('provider'))?>
 

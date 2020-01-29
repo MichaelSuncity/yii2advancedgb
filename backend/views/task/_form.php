@@ -1,43 +1,39 @@
 <?php
-
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap\Html;
+use yii\bootstrap\ActiveForm;
+use common\models\Task;
+use common\models\Priority;
+use common\models\Project;
+use yii\web\View;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Task */
 /* @var $form yii\widgets\ActiveForm */
+/* @var $templates array */
+
+
 ?>
 
-<div class="task-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+<?php $form = ActiveForm::begin(); ?>
+<?php if (!empty($templates)) { ?>
+    <?= $form->field($model, 'template_id')->dropDownList($templates, ['prompt'=>'Без шаблона']) ?>
+<?php } ?>
 
-    <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+<?= $form->field($model, 'project_id')->textInput()->dropDownList(\common\models\Project::getProjectNames()) ?>
+<?= $form->field($model, 'title')->textInput(['autocomplete' => 'off']) ?>
+<?= $form->field($model, 'dayStart')->textInput(['type' => 'date']) ?>
+<?= $form->field($model, 'dayEnd')->textInput(['type' => 'date']) ?>
+<?= $form->field($model, 'executor_id')->textInput()->dropDownList(\common\models\User::getUsernames()) ?>
+<?= $form->field($model, 'description')->textarea(['rows' => 5]) ?>
+<?= $form->field($model, 'priority_id')->textInput()->dropDownList(Priority::getTaskPriorities()) ?>
+<?= $form->field($model, 'status')->dropDownList(Task::getStatusName()) ?>
+<?= $form->field($model, 'is_template')->checkbox() ?>
 
-    <?= $form->field($model, 'dayStart')->textInput(['maxlength' => true]) ?>
+<p><?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?></p>
 
-    <?= $form->field($model, 'dayEnd')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'author_id')->textInput() ?>
+<?php ActiveForm::end(); ?>
 
-    <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
-
-    <?= $form->field($model, 'status')->textInput() ?>
-
-    <?= $form->field($model, 'executor_id')->textInput() ?>
-
-    <?= $form->field($model, 'priority_id')->textInput() ?>
-
-    <?= $form->field($model, 'is_template')->textInput() ?>
-
-    <?= $form->field($model, 'template_id')->textInput() ?>
-
-    <?= $form->field($model, 'project_id')->textInput() ?>
-
-    <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
-    </div>
-
-    <?php ActiveForm::end(); ?>
-
-</div>
+<p><?= Html::a('Вернуться в список задач', Url::to(['/task/index']) ) ?></p>

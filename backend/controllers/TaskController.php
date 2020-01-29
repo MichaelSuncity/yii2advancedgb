@@ -2,137 +2,147 @@
 
 namespace backend\controllers;
 
-use Yii;
 use common\models\Task;
-use backend\models\search\TaskSearch;
-use yii\filters\AccessControl;
 use yii\web\Controller;
+use Yii;
+use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
+use backend\models\search\TaskSearch;
+use common\models\TaskAttachmentsAddForm;
+use common\models\TaskComments;
+use yii\web\UploadedFile;
+use common\models\TaskSubscriber;
 
-/**
- * TaskController implements the CRUD actions for Task model.
- */
 class TaskController extends Controller
 {
-    /**
-     * {@inheritdoc}
-     */
     public function behaviors()
     {
         return [
             'access' => [
-                'class' => AccessControl::class,
+                'class' => AccessControl::class, //ACF
                 'rules' => [
                     [
-                        'actions' => ['view', 'create', 'update', 'delete', 'index'],
                         'allow' => true,
-                        'roles' => ['admin'],
+                        'actions' => ['index', 'create', 'view', 'update', 'delete',
+                            'addattachment', 'addcomment', 'subscribe', 'unsubscribe'],
+                        'roles' => ['admin']
                     ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
                 ],
             ],
         ];
     }
 
-    /**
-     * Lists all Task models.
-     * @return mixed
-     */
-    public function actionIndex()
+
+    public function actionIndex($sort = false)
     {
         $searchModel = new TaskSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $provider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
+            'provider' => $provider,
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
         ]);
     }
 
-    /**
-     * Displays a single Task model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+
+
+    public function actionView(int $id) {
+        $model = Task::findOne($id);
+        $isSubscribed = TaskSubscriber::isSubscribed(\Yii::$app->user->id, $id);
+            return $this->render('view',
+                ['model' => $model,
+                    'isSubscribed' => $isSubscribed,
+                    'taskAttachmentForm' => new TaskAttachmentsAddForm(),
+                    'taskCommentForm' => new TaskComments(),
+                ]);
     }
 
-    /**
-     * Creates a new Task model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
+    public function actionCreate(){
         $model = new Task();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
+        $templates = Task::find()->where(['is_template'=>true])->all();
+        $templates = ArrayHelper::map($templates, 'id', 'title');
+
         return $this->render('create', [
             'model' => $model,
+            'templates'=>$templates
         ]);
     }
 
-    /**
-     * Updates an existing Task model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id = null)
     {
-        $model = $this->findModel($id);
+        if (!empty($id)) {
+            $model = Task::findOne($id);
+                if ($model->load(Yii::$app->request->post()) and $model->validate()) {
+                    if ($model->save()) {
+                        return $this->redirect(['task/view', 'id' => $model->id]);
+                    }
+                }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+                $templates = Task::find()->where(['is_template'=>true])->all();
+                $templates = ArrayHelper::map($templates, 'id', 'title');
+
+                return $this->render('update', [
+                    'model' => $model,
+                    'templates'=>[]
+                ]);
         }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
     }
 
-    /**
-     * Deletes an existing Task model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id)
+    public function actionDelete(int $id )
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        $model = Task::findOne($id);
+            $model->delete();
+            return $this->redirect(['index']);
     }
 
-    /**
-     * Finds the Task model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Task the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Task::findOne($id)) !== null) {
-            return $model;
-        }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+    public function actionAddattachment()
+    {
+        $model = new TaskAttachmentsAddForm();
+        $model->load(\Yii::$app->request->post());
+        $model->attachment = UploadedFile::getInstance($model, 'attachment');
+        if ($model->save()) {
+            \Yii::$app->session->setFlash('success', "Файл добавлен");
+        } else {
+            \Yii::$app->session->setFlash('error', "Не удалось добавить файл");
+        }
+        $this->redirect(\Yii::$app->request->referrer);
+    }
+
+    public function actionAddcomment()
+    {
+        $model = new TaskComments();
+        if ($model->load(\Yii::$app->request->post()) && $model->save()) {
+            \Yii::$app->session->setFlash('success', "Комментарий добавлен");
+        } else {
+            \Yii::$app->session->setFlash('error', "Не удалось добавить комментарий");
+        }
+        $this->redirect(\Yii::$app->request->referrer);
+    }
+
+    public function actionSubscribe($id)
+    {
+        if (TaskSubscriber::subscribe(\Yii::$app->user->id, $id)) {
+            Yii::$app->session->setFlash('success', 'Subscribed');
+        } else {
+            Yii::$app->session->setFlash('error', 'Error');
+        }
+        $this->redirect(['task/view', 'id' => $id]);
+    }
+
+    public function actionUnsubscribe($id)
+    {
+        if (TaskSubscriber::unsubscribe(\Yii::$app->user->id, $id)) {
+            Yii::$app->session->setFlash('success', 'Subscribed');
+        } else {
+            Yii::$app->session->setFlash('error', 'Error');
+        }
+        $this->redirect(['task/view', 'id' => $id]);
     }
 }

@@ -1,21 +1,26 @@
 <?php
+use yii\bootstrap\Html;
+use yii\bootstrap\ActiveForm;
+use common\models\Task;
+use yii\web\View;
+use yii\helpers\Url;
 
-use yii\helpers\Html;
+/**
+ * @var  View $this
+ * @var  Task $model
+ * @var $templates array
+ */
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Task */
-
-$this->title = 'Update Task: ' . $model->title;
+$this->title = 'Редактирование задачи: ' . $model->title;
 $this->params['breadcrumbs'][] = ['label' => 'Tasks', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = 'редактирование';
+
 ?>
-<div class="task-update">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+<h1><?= Html::encode($this->title) ?></h1>
 
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
-</div>
+<?= $this->render('_form', [
+    'model' => $model,
+    'templates' => $templates ?: [],
+]) ?>

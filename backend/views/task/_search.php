@@ -1,11 +1,11 @@
 <?php
-
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\search\TaskSearch */
+/* @var $model frontend\models\search\TaskSearch */
 /* @var $form yii\widgets\ActiveForm */
+
 ?>
 
 <div class="task-search">
@@ -13,35 +13,20 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
+        /*'options' => [
+            'data-pjax' => 1
+        ],*/
     ]); ?>
 
     <?= $form->field($model, 'id') ?>
-
     <?= $form->field($model, 'title') ?>
-
-    <?= $form->field($model, 'dayStart') ?>
-
-    <?= $form->field($model, 'dayEnd') ?>
-
+    <?= $form->field($model, 'dayStart')->textInput(['type' => 'date'])?>
+    <?= $form->field($model, 'dayEnd')->textInput(['type' => 'date']) ?>
     <?= $form->field($model, 'author_id') ?>
+    <?= $form->field($model, 'executor_id') ?>
+    <?= $form->field($model, 'priority_id') ?>
+    <?= $form->field($model, 'status') ?>
 
-    <?php // echo $form->field($model, 'description') ?>
-
-    <?php // echo $form->field($model, 'status') ?>
-
-    <?php // echo $form->field($model, 'created_at') ?>
-
-    <?php // echo $form->field($model, 'updated_at') ?>
-
-    <?php // echo $form->field($model, 'executor_id') ?>
-
-    <?php // echo $form->field($model, 'priority_id') ?>
-
-    <?php // echo $form->field($model, 'is_template') ?>
-
-    <?php // echo $form->field($model, 'template_id') ?>
-
-    <?php // echo $form->field($model, 'project_id') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

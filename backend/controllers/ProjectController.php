@@ -2,10 +2,13 @@
 
 namespace backend\controllers;
 
+use backend\models\search\ProjectSearch;
+use common\models\Task;
 use Yii;
 use common\models\Project;
-use backend\models\search\ProjectSearch;
+use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -22,19 +25,13 @@ class ProjectController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::class,
+                'class' => AccessControl::class, //ACF
                 'rules' => [
                     [
-                        'actions' => ['view', 'create', 'update', 'delete', 'index'],
                         'allow' => true,
-                        'roles' => ['admin'],
+                        'actions' => ['index', 'create', 'view', 'update', 'delete'],
+                        'roles' => ['admin']
                     ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
                 ],
             ],
         ];
@@ -50,8 +47,8 @@ class ProjectController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
         ]);
     }
 
@@ -63,9 +60,14 @@ class ProjectController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
+        $model = $this->findModel($id);
+
+        $provider = new ActiveDataProvider([
+            'query' => Task::find()->where(['project_id' => $model->id]),
         ]);
+
+            return $this->render('view', compact('model', 'provider'));
+
     }
 
     /**
@@ -95,17 +97,19 @@ class ProjectController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        if (!empty($id)) {
+            $model = Project::findOne($id);
+                if ($model->load(Yii::$app->request->post()) and $model->validate()) {
+                    if ($model->save()) {
+                        return $this->redirect(["view", "id"=>$model->id]);
+                    }
+                }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+                return $this->render('update', [
+                    'model' => $model,
+                ]);
         }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
     }
-
     /**
      * Deletes an existing Project model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -115,9 +119,9 @@ class ProjectController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        $model = Project::findOne($id);
+            $model->delete();
+            return $this->redirect(['index']);
     }
 
     /**

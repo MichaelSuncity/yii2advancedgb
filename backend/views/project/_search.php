@@ -16,23 +16,14 @@ use yii\widgets\ActiveForm;
     ]); ?>
 
     <?= $form->field($model, 'id') ?>
-
-    <?= $form->field($model, 'author_id') ?>
-
     <?= $form->field($model, 'title') ?>
-
+    <?= $form->field($model, 'author_id') ?>
     <?= $form->field($model, 'description') ?>
-
     <?= $form->field($model, 'priority_id') ?>
-
-    <?php // echo $form->field($model, 'status') ?>
-
+    <?php  $form->field($model, 'status') ?>
     <?php // echo $form->field($model, 'created_at') ?>
-
     <?php // echo $form->field($model, 'updated_at') ?>
-
     <?php // echo $form->field($model, 'is_parent') ?>
-
     <?php // echo $form->field($model, 'parent_project_id') ?>
 
     <div class="form-group">

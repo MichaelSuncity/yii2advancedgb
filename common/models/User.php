@@ -54,6 +54,9 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
+            [['username', 'email'], 'string'],
+            [['username', 'email'], 'required'],
+            [['email'], 'email'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
         ];
@@ -72,7 +75,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
+        return static::findOne(['auth_key' => $token, 'status' => self::STATUS_ACTIVE]);
     }
 
     /**
@@ -222,4 +225,30 @@ class User extends ActiveRecord implements IdentityInterface
             'id',
             'username');
     }
+
+
+    public function fields()
+    {
+        $fields =  parent::fields();
+        unset($fields['password_hash']);
+        unset($fields['verification_token']);
+        return $fields;
+    }
+
+
+
+    public function beforeSave($insert)
+    {
+        if (Yii::$app->request->isPost) {
+            $this->generateAuthKey();
+            $this->generateEmailVerificationToken();
+            if (empty(Yii::$app->request->post('password'))){
+                $this->setPassword(Yii::$app->security->generatePasswordHash(6));
+            } else {
+                $this->setPassword(Yii::$app->request->post('password'));
+            }
+        }
+        return parent::beforeSave($insert);
+    }
+
 }

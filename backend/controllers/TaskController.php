@@ -1,8 +1,6 @@
 <?php
 
-
-namespace frontend\controllers;
-
+namespace backend\controllers;
 
 use common\models\Task;
 use yii\web\Controller;
@@ -10,7 +8,7 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 use yii\helpers\ArrayHelper;
-use frontend\models\search\TaskSearch;
+use backend\models\search\TaskSearch;
 use common\models\TaskAttachmentsAddForm;
 use common\models\TaskComments;
 use yii\web\UploadedFile;
@@ -28,7 +26,7 @@ class TaskController extends Controller
                         'allow' => true,
                         'actions' => ['index', 'create', 'view', 'update', 'delete',
                             'addattachment', 'addcomment', 'subscribe', 'unsubscribe'],
-                        'roles' => ['@']
+                        'roles' => ['admin']
                     ],
                 ],
             ],
@@ -52,16 +50,12 @@ class TaskController extends Controller
     public function actionView(int $id) {
         $model = Task::findOne($id);
         $isSubscribed = TaskSubscriber::isSubscribed(\Yii::$app->user->id, $id);
-        if (Yii::$app->user->can('manager') || Yii::$app->user->can('admin') || $model->author_id == Yii::$app->user->id) {
             return $this->render('view',
                 ['model' => $model,
-                'isSubscribed' => $isSubscribed,
-                'taskAttachmentForm' => new TaskAttachmentsAddForm(),
-                'taskCommentForm' => new TaskComments(),
+                    'isSubscribed' => $isSubscribed,
+                    'taskAttachmentForm' => new TaskAttachmentsAddForm(),
+                    'taskCommentForm' => new TaskComments(),
                 ]);
-        }  else {
-            throw new NotFoundHttpException();
-        }
     }
 
     public function actionCreate(){
@@ -84,7 +78,6 @@ class TaskController extends Controller
     {
         if (!empty($id)) {
             $model = Task::findOne($id);
-            if ($model->author_id == Yii::$app->user->id) {
                 if ($model->load(Yii::$app->request->post()) and $model->validate()) {
                     if ($model->save()) {
                         return $this->redirect(['task/view', 'id' => $model->id]);
@@ -97,23 +90,15 @@ class TaskController extends Controller
                 return $this->render('update', [
                     'model' => $model,
                     'templates'=>[]
-
                 ]);
-            } else {
-                throw new NotFoundHttpException();
-            }
         }
     }
 
     public function actionDelete(int $id )
     {
         $model = Task::findOne($id);
-        if (Yii::$app->user->can('manager') || Yii::$app->user->can('admin') || $model->author_id == Yii::$app->user->id) {
             $model->delete();
             return $this->redirect(['index']);
-        }else{
-            throw new NotFoundHttpException();
-        }
     }
 
 

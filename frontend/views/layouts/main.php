@@ -9,6 +9,10 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use common\widgets\Alert;
+use yii\helpers\Url;
+
+$urlPrevious = Url::Previous();
+$urlCurrent = Url::remember();
 
 AppAsset::register($this);
 ?>
@@ -40,6 +44,7 @@ AppAsset::register($this);
         ['label' => 'Chat', 'url' => ['/chat/index']],
         ['label' => 'Projects', 'url' => ['/project/index']],
         ['label' => 'Tasks', 'url' => ['/task/index']],
+        ['label' => 'Personal account', 'url' => ['/account/task']],
         ['label' => 'About', 'url' => ['/site/about']],
         ['label' => 'Contact', 'url' => ['/site/contact']],
     ];
@@ -69,6 +74,7 @@ AppAsset::register($this);
         ]) ?>
         <?= Alert::widget() ?>
         <?= $content ?>
+        <p><?= Html::a('Вернуться на предыдущую страницу', $urlPrevious ) ?></p>
     </div>
 </div>
 

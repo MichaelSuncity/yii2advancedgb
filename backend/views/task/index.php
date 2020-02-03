@@ -68,7 +68,7 @@ if (Yii::$app->user->can('user')){
             'view' => function ($url, Task $model) {
                 return html::a( '', Url::to(['/task/view', 'id' => $model->id]), ['class' => 'glyphicon glyphicon-eye-open']);
             },
-             'update' => function ($url, Task $model){
+            'update' => function ($url, Task $model){
                 return html::a('', Url::to(['/task/update', 'id' => $model->id]), ['class' => 'glyphicon glyphicon-pencil']);
             },
             'delete' => function ($url, Task $model){
@@ -92,7 +92,6 @@ $this->params['breadcrumbs'][] = $this->title;
     'filterModel' => $searchModel,
     'columns'=> $columns,
 ])?>
-
 
 
 

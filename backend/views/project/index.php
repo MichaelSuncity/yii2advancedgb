@@ -12,6 +12,8 @@ use yii\grid\ActionColumn;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /*  @var \common\models\Project[] $project*/
+ /* @var $searchModel backend\models\search\ProjectSearch*/
+
 
 $this->title = 'Projects';
 $this->params['breadcrumbs'][] = $this->title;
@@ -22,6 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
         'columns' => [
             [
                 'class' => SerialColumn::class,
@@ -32,14 +35,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'id',
             ],
             [
-                'class' => ActionColumn::class,
-                'header' => 'Название проекта',
-                'template' => '{view}',
-                'buttons' => [
-                    'view' => function ($url, $model){
-                        return html::a("{$model->title}", $url);
-                    }
-                ],
+                'label' => 'Название проекта',
+                'attribute' => 'title',
             ],
             [
                 'label' => 'Описание',

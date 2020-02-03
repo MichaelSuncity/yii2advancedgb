@@ -12,7 +12,7 @@ use common\widgets\Alert;
 use yii\helpers\Url;
 
 $urlPrevious = Url::Previous();
-$urlCurrent[] = Url::remember();
+$urlCurrent = Url::remember();
 
 AppAsset::register($this);
 ?>

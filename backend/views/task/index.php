@@ -66,13 +66,13 @@ if (Yii::$app->user->can('user')){
         'template' => '{view} {update} {delete}',
         'buttons' => [
             'view' => function ($url, Task $model) {
-                return html::a('view', Url::to(['/task/view', 'id' => $model->id]));
+                return html::a( '', Url::to(['/task/view', 'id' => $model->id]), ['class' => 'glyphicon glyphicon-eye-open']);
             },
-             'update' => function ($url, Task $model){
-                return html::a('update', Url::to(['/task/update', 'id' => $model->id]));
+            'update' => function ($url, Task $model){
+                return html::a('', Url::to(['/task/update', 'id' => $model->id]), ['class' => 'glyphicon glyphicon-pencil']);
             },
             'delete' => function ($url, Task $model){
-                return html::a('delete', Url::to(['/task/delete', 'id' => $model->id]));
+                return html::a('', Url::to(['/task/delete', 'id' => $model->id]), ['class' => 'glyphicon glyphicon-trash']);
             }
         ],
     ];
@@ -92,7 +92,6 @@ $this->params['breadcrumbs'][] = $this->title;
     'filterModel' => $searchModel,
     'columns'=> $columns,
 ])?>
-
 
 
 
